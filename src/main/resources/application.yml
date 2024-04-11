@@ -1,0 +1,16 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: EmployeeApplication
+
+
+
+service:
+  employee:
+    url: https://dummy.restapiexample.com/api/v1
+
+logging:
+  level:
+    com.example.rqchallenge.employees: DEBUG
