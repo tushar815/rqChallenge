@@ -22,10 +22,10 @@ public interface IEmployeeController {
     ResponseEntity<Employee> getEmployeeById(@PathVariable String id) throws JsonProcessingException;
 
     @GetMapping("/highestSalary")
-    ResponseEntity<Integer> getHighestSalaryOfEmployees();
+    ResponseEntity<Integer> getHighestSalaryOfEmployees() throws JsonProcessingException;
 
     @GetMapping("/topTenHighestEarningEmployeeNames")
-    ResponseEntity<List<String>> getTopTenHighestEarningEmployeeNames();
+    ResponseEntity<List<String>> getTopTenHighestEarningEmployeeNames() throws JsonProcessingException;
 
     @PostMapping()
     ResponseEntity<Employee> createEmployee(@RequestBody Map<String, Object> employeeInput);

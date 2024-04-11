@@ -55,13 +55,25 @@ public class EmployeeController implements IEmployeeController {
     }
 
     @Override
-    public ResponseEntity<Integer> getHighestSalaryOfEmployees() {
-        return null;
+    public ResponseEntity<Integer> getHighestSalaryOfEmployees() throws JsonProcessingException {
+        log.debug("getHighestSalaryOfEmployees() method called");
+         Integer salary = employeeService.getHighestSalaryOfEmployees();
+        log.debug("getHighestSalaryOfEmployees() returned with {} salary", salary);
+        return ResponseEntity
+                .status(HttpStatus.OK).
+                body(salary);
     }
 
     @Override
-    public ResponseEntity<List<String>> getTopTenHighestEarningEmployeeNames() {
-        return null;
+    public ResponseEntity<List<String>> getTopTenHighestEarningEmployeeNames() throws JsonProcessingException {
+
+        log.debug("getHighestSalaryOfEmployees() method called");
+       List<String> salaries = employeeService.getTop10HighestEarningEmployeeNames();
+        log.debug("getHighestSalaryOfEmployees() returned with {} salary", salaries);
+        return ResponseEntity
+                .status(HttpStatus.OK).
+                body(salaries);
+
     }
 
     @Override
