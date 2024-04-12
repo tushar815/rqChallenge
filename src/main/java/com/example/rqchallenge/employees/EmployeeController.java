@@ -1,4 +1,4 @@
-package com.example.rqchallenge.employees.controller;
+package com.example.rqchallenge.employees;
 
 import com.example.rqchallenge.employees.dto.Employee;
 import com.example.rqchallenge.employees.service.EmployeeService;
@@ -77,12 +77,18 @@ public class EmployeeController implements IEmployeeController {
     }
 
     @Override
-    public ResponseEntity<Employee> createEmployee(Map<String, Object> employeeInput) {
-        return null;
+    public ResponseEntity<Employee> createEmployee(Map<String, Object> employeeInput) throws JsonProcessingException {
+        Employee employee = employeeService.createEmployee(employeeInput);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(employee);
     }
 
     @Override
-    public ResponseEntity<String> deleteEmployeeById(String id) {
-        return null;
+    public ResponseEntity<String> deleteEmployeeById(String id) throws JsonProcessingException {
+        String name = employeeService.deleteEmployeeById(id);
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .body(name);
     }
 }

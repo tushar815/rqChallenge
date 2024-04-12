@@ -1,4 +1,4 @@
-package com.example.rqchallenge.employees.controller;
+package com.example.rqchallenge.employees;
 
 import com.example.rqchallenge.employees.dto.Employee;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -28,9 +28,9 @@ public interface IEmployeeController {
     ResponseEntity<List<String>> getTopTenHighestEarningEmployeeNames() throws JsonProcessingException;
 
     @PostMapping()
-    ResponseEntity<Employee> createEmployee(@RequestBody Map<String, Object> employeeInput);
+    ResponseEntity<Employee> createEmployee(@RequestBody Map<String, Object> employeeInput) throws JsonProcessingException;
 
     @DeleteMapping("/{id}")
-    ResponseEntity<String> deleteEmployeeById(@PathVariable String id);
+    ResponseEntity<String> deleteEmployeeById(@PathVariable String id) throws JsonProcessingException;
 
 }

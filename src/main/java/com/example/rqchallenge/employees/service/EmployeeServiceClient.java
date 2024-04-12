@@ -1,11 +1,8 @@
 package com.example.rqchallenge.employees.service;
 
-import com.example.rqchallenge.employees.dto.AllEmployeesResponse;
-import com.example.rqchallenge.employees.dto.Employee;
-import com.example.rqchallenge.employees.dto.EmployeeResponse;
+import com.example.rqchallenge.employees.dto.*;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
 import java.util.List;
@@ -19,8 +16,12 @@ public interface EmployeeServiceClient {
 
 
     @GetMapping(value = "/employee/{id}" , produces = "application/json")
-    public Optional<EmployeeResponse> getEmployeeById(@PathVariable String id);
+    public EmployeeResponse getEmployeeById(@PathVariable String id);
 
+    @PostMapping(value = "/create", produces = "application/json")
+    public EmployeeCreateResponse createEmployee(@RequestBody EmployeeRequest request);
 
+    @DeleteMapping(value = "/delete/{id}", produces = "application/json")
+    public BaseResponse deleteEmployeeById(@PathVariable String id);
 
 }

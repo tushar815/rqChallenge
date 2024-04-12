@@ -10,6 +10,7 @@ spring:
 service:
   employee:
     url: https://dummy.restapiexample.com/api/v1
+  useMockData: true
 
 logging:
   level:
