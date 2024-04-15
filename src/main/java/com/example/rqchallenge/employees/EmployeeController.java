@@ -1,12 +1,15 @@
 package com.example.rqchallenge.employees;
 
 import com.example.rqchallenge.employees.dto.Employee;
+import com.example.rqchallenge.employees.exception.BadRequestBodyException;
 import com.example.rqchallenge.employees.service.EmployeeService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,6 +20,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("employee")
 @AllArgsConstructor
+@Validated
 @Slf4j
 public class EmployeeController implements IEmployeeController {
 
@@ -79,6 +83,10 @@ public class EmployeeController implements IEmployeeController {
 
     @Override
     public ResponseEntity<Employee> createEmployee(Map<String, Object> employeeInput) throws Exception {
+        if (!employeeInput.containsKey("name") || !employeeInput.containsKey("age") || !employeeInput.containsKey("department")) {
+            throw new BadRequestBodyException("Missing required data");
+        }
+
         log.debug("Calling createEmployee from Controller createEmployee");
         Employee employee = employeeService.createEmployee(employeeInput);
         log.debug("createEmployee() returned with {} employee", employee);

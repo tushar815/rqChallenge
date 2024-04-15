@@ -26,6 +26,21 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
                 LocalDateTime.now()
         );
 
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
+    @ExceptionHandler(BadRequestBodyException.class)
+    public ResponseEntity<ErrorResponse> handleBadRequestBodyException(BadRequestBodyException e
+            , WebRequest webRequest){
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                webRequest.getDescription(false),
+                HttpStatus.BAD_REQUEST,
+                e.getMessage(),
+                LocalDateTime.now()
+        );
+
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
@@ -40,7 +55,7 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
         LocalDateTime.now()
         );
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
 

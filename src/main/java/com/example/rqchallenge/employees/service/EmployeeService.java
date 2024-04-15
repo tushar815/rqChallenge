@@ -57,7 +57,7 @@ public class EmployeeService {
         if(Optional.ofNullable(employeeList).isPresent()){
             return employeeList
                     .stream()
-                    .filter(employee -> employee.getEmployee_name().contains(employeeName))
+                    .filter(employee -> employee.getEmployee_name().toLowerCase().contains(employeeName.toLowerCase()))
                     .collect(Collectors.toList());
         }else {
             log.error("Employee with given name {}  does not exist!", employeeName);
