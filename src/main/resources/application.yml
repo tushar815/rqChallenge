@@ -14,4 +14,4 @@ service:
 
 logging:
   level:
-    com.example.rqchallenge.employees: DEBUG
+    com.example.rqchallenge.employees: [DEBUG, ERROR]

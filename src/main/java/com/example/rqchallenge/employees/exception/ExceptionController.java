@@ -15,6 +15,19 @@ import java.time.LocalDateTime;
 public class ExceptionController extends ResponseEntityExceptionHandler {
 
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGlobalExceptions(Exception e
+            , WebRequest webRequest){
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                webRequest.getDescription(false),
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                e.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(EmployeeDoesNotExistException.class)
     public ResponseEntity<ErrorResponse> handleEmployeeDoesNotExistException(EmployeeDoesNotExistException e

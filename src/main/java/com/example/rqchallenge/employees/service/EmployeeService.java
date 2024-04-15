@@ -31,22 +31,21 @@ public class EmployeeService {
 
     public List<Employee> getAllEmployees() throws JsonProcessingException {
         log.debug("Calling Employee Service Client to Get All Employees");
-
-
         AllEmployeesResponse employeesResponse =  useMockData ? MockData.getAllEmployeeMock() :employeeServiceClient.getAllEmployees();
-
         return new ArrayList<>(employeesResponse.getData());
     }
 
     public Employee getEmployeeById(String id) throws JsonProcessingException {
         log.debug("Calling Employee Service Client to Get employee for given id {}", id);
-
         EmployeeResponse employeeResponse = useMockData ? MockData.getEmployeeById(id) : employeeServiceClient.getEmployeeById(id);
+        if(Optional.ofNullable(employeeResponse.getData()).isPresent()){
+            return employeeResponse.getData();
 
-        if(!Optional.of(employeeResponse.getData()).isPresent()){
+        }else{
+            log.error("Employee with given id {} does not exist!", id);
             throw new EmployeeDoesNotExistException("Employee with given id "+id +" does not exist!");
+
         }
-        return employeeResponse.getData();
     }
 
     public List<Employee> getEmployeesByNameSearch(String employeeName) throws JsonProcessingException {
@@ -54,10 +53,17 @@ public class EmployeeService {
 
         AllEmployeesResponse employeesResponse =  useMockData ? MockData.getAllEmployeeMock() : employeeServiceClient.getAllEmployees();
         List<Employee> employeeList = employeesResponse.getData();
-        return employeeList
-                .stream()
-                .filter(employee -> employee.getEmployee_name().contains(employeeName))
-                .collect(Collectors.toList());
+
+        if(Optional.ofNullable(employeeList).isPresent()){
+            return employeeList
+                    .stream()
+                    .filter(employee -> employee.getEmployee_name().contains(employeeName))
+                    .collect(Collectors.toList());
+        }else {
+            log.error("Employee with given name {}  does not exist!", employeeName);
+            throw new EmployeeDoesNotExistException("Employee with given name "+ employeeName +" does not exist!");
+        }
+
     }
 
     public Integer getHighestSalaryOfEmployees() throws JsonProcessingException {
@@ -65,10 +71,18 @@ public class EmployeeService {
 
         AllEmployeesResponse employeesResponse =  useMockData ? MockData.getAllEmployeeMock() : employeeServiceClient.getAllEmployees();
         List<Employee> employeeList = employeesResponse.getData();
-        return employeeList
-                .stream()
-                .max((o1, o2) -> Math.toIntExact(o1.getEmployee_salary() - o2.getEmployee_salary()))
-                .map(employee -> employee.getEmployee_salary().intValue()).get();
+
+        if(Optional.ofNullable(employeeList).isPresent()){
+
+            return employeeList
+                    .stream()
+                    .max((o1, o2) -> Math.toIntExact(o1.getEmployee_salary() - o2.getEmployee_salary()))
+                    .map(employee -> employee.getEmployee_salary().intValue()).get();
+        }else{
+            log.error("No Employee Data Available!");
+            throw new EmployeeDoesNotExistException("No Employee Data Available!");
+        }
+
     }
 
     public List<String> getTop10HighestEarningEmployeeNames() throws JsonProcessingException {
@@ -76,28 +90,52 @@ public class EmployeeService {
 
         AllEmployeesResponse employeesResponse =  useMockData ? MockData.getAllEmployeeMock() :  employeeServiceClient.getAllEmployees();
         List<Employee> employeeList = employeesResponse.getData();
-        return employeeList
-                .stream()
-                .sorted((o1, o2) -> Math.toIntExact(o2.getEmployee_salary() - o1.getEmployee_salary()))
-                .map(employee -> employee.getEmployee_name())
-                .limit(10)
-                .map(salary -> salary.toString())
-                .collect(Collectors.toList());
+
+        if(Optional.ofNullable(employeeList).isPresent()){
+            return employeeList
+                    .stream()
+                    .sorted((o1, o2) -> Math.toIntExact(o2.getEmployee_salary() - o1.getEmployee_salary()))
+                    .map(employee -> employee.getEmployee_name())
+                    .limit(10)
+                    .map(salary -> salary.toString())
+                    .collect(Collectors.toList());
+        }else {
+            log.error("No Employee Data Available!");
+            throw new EmployeeDoesNotExistException("No Employee Data Available!");
+        }
+
 
     }
 
-    public Employee createEmployee(Map<String, Object> employeeInput) throws JsonProcessingException {
-            EmployeeRequest employeeRequest = new ObjectMapper().convertValue(employeeInput, EmployeeRequest.class);
+    public Employee createEmployee(Map<String, Object> employeeInput) throws Exception {
+        log.debug("Calling Employee Service Client to create employee with  {} " , employeeInput);
+
+        EmployeeRequest employeeRequest = new ObjectMapper().convertValue(employeeInput, EmployeeRequest.class);
             EmployeeCreateResponse employeeResponse =  useMockData ?  MockData.CreateEmployee(employeeRequest) : employeeServiceClient.createEmployee(employeeRequest);
-            return EmployeeMapper.mapToEmployee(employeeResponse.getData(), new Employee());
+
+            if(Optional.ofNullable(employeeResponse.getData()).isPresent()){
+                return EmployeeMapper.mapToEmployee(employeeResponse.getData(), new Employee());
+        }else {
+                log.error("Failed to create employee");
+                throw new Exception("Failed to create employee");
+            }
+
 
     }
 
 
-    public String deleteEmployeeById(String id) throws JsonProcessingException {
-            Employee employee = getEmployeeById(id);
+    public String deleteEmployeeById(String id) throws Exception {
+        log.debug("Calling Employee Service Client to delete employee with id  {} " , id);
+
+        Employee employee = getEmployeeById(id);
             BaseResponse baseResponse = useMockData ?  MockData.deleteEmployById(id): employeeServiceClient.deleteEmployeeById(id);
+        if(Optional.ofNullable(baseResponse.getStatus()).isPresent()){
             return employee.getEmployee_name();
+        }else {
+            log.error("Failed to delete employee with given Id {}",id);
+            throw new Exception("Failed to delete employee with given Id "+ id);
+        }
+
     }
 
 

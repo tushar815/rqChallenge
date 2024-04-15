@@ -25,9 +25,9 @@ public class EmployeeController implements IEmployeeController {
 
     @Override
     public ResponseEntity<List<Employee>> getAllEmployees() throws IOException {
-        log.debug("getAllEmployee() method called");
+        log.debug("Calling getAllEmployees from Controller getAllEmployees");
         List<Employee> employeeList = employeeService.getAllEmployees();
-        log.debug("getAllEmployee() returned {] Employees", employeeList.size());
+        log.debug("getAllEmployees() returned {} Employees", employeeList.size());
         return ResponseEntity
                 .status(HttpStatus.OK).
                 body(employeeList);
@@ -35,8 +35,9 @@ public class EmployeeController implements IEmployeeController {
 
     @Override
     public ResponseEntity<List<Employee>> getEmployeesByNameSearch(String searchString) throws JsonProcessingException {
-        log.debug("getEmployeesByNameSearch() method called");
+        log.debug("Calling getEmployeesByNameSearch from Controller getEmployeesByNameSearch");
         List<Employee> employeesList = employeeService.getEmployeesByNameSearch(searchString);
+        log.debug("getAllEmployees() returned {} Employees", employeesList.size());
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(employeesList);
@@ -46,9 +47,9 @@ public class EmployeeController implements IEmployeeController {
 
     @Override
     public ResponseEntity<Employee> getEmployeeById(String id) throws JsonProcessingException {
-        log.debug("getEmployeeById() method called");
+        log.debug("Calling getEmployeeById from Controller getEmployeeById");
         Employee employee = employeeService.getEmployeeById(id);
-        log.debug("getEmployeeById() returned with {} Employee", employee);
+        log.debug("getAllEmployees() returned employee with name {} ", employee.getEmployee_name());
         return ResponseEntity
                 .status(HttpStatus.OK).
                 body(employee);
@@ -56,7 +57,7 @@ public class EmployeeController implements IEmployeeController {
 
     @Override
     public ResponseEntity<Integer> getHighestSalaryOfEmployees() throws JsonProcessingException {
-        log.debug("getHighestSalaryOfEmployees() method called");
+        log.debug("Calling getHighestSalaryOfEmployees from Controller getHighestSalaryOfEmployees");
          Integer salary = employeeService.getHighestSalaryOfEmployees();
         log.debug("getHighestSalaryOfEmployees() returned with {} salary", salary);
         return ResponseEntity
@@ -67,7 +68,7 @@ public class EmployeeController implements IEmployeeController {
     @Override
     public ResponseEntity<List<String>> getTopTenHighestEarningEmployeeNames() throws JsonProcessingException {
 
-        log.debug("getHighestSalaryOfEmployees() method called");
+        log.debug("Calling getTopTenHighestEarningEmployeeNames from Controller getTopTenHighestEarningEmployeeNames");
        List<String> salaries = employeeService.getTop10HighestEarningEmployeeNames();
         log.debug("getHighestSalaryOfEmployees() returned with {} salary", salaries);
         return ResponseEntity
@@ -77,16 +78,21 @@ public class EmployeeController implements IEmployeeController {
     }
 
     @Override
-    public ResponseEntity<Employee> createEmployee(Map<String, Object> employeeInput) throws JsonProcessingException {
+    public ResponseEntity<Employee> createEmployee(Map<String, Object> employeeInput) throws Exception {
+        log.debug("Calling createEmployee from Controller createEmployee");
         Employee employee = employeeService.createEmployee(employeeInput);
+        log.debug("createEmployee() returned with {} employee", employee);
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(employee);
     }
 
     @Override
-    public ResponseEntity<String> deleteEmployeeById(String id) throws JsonProcessingException {
+    public ResponseEntity<String> deleteEmployeeById(String id) throws Exception {
+        log.debug("Calling deleteEmployeeById from Controller deleteEmployeeById");
         String name = employeeService.deleteEmployeeById(id);
+        log.debug("deleteEmployeeById() deleted employee  with name {} ", name);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .body(name);

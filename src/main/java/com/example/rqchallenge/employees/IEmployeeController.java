@@ -28,9 +28,9 @@ public interface IEmployeeController {
     ResponseEntity<List<String>> getTopTenHighestEarningEmployeeNames() throws JsonProcessingException;
 
     @PostMapping()
-    ResponseEntity<Employee> createEmployee(@RequestBody Map<String, Object> employeeInput) throws JsonProcessingException;
+    ResponseEntity<Employee> createEmployee(@RequestBody Map<String, Object> employeeInput) throws Exception;
 
     @DeleteMapping("/{id}")
-    ResponseEntity<String> deleteEmployeeById(@PathVariable String id) throws JsonProcessingException;
+    ResponseEntity<String> deleteEmployeeById(@PathVariable String id) throws Exception;
 
 }

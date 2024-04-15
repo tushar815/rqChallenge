@@ -1,11 +1,13 @@
 package com.example.rqchallenge.employees.controller.service;
 
 import com.example.rqchallenge.employees.dto.*;
+import com.example.rqchallenge.employees.exception.EmployeeDoesNotExistException;
 import com.example.rqchallenge.employees.service.EmployeeService;
 import com.example.rqchallenge.employees.service.EmployeeServiceClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -17,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -52,6 +56,7 @@ public class EmployeeServiceTest {
         assertThat(employees.get(0).getEmployee_name()).isEqualTo("tushar");
     }
 
+
     @Test
     public void testGetEmployeeById() throws JsonProcessingException {
         Employee employee =  new Employee(1,"tushar", 200L, 23, "");
@@ -71,6 +76,23 @@ public class EmployeeServiceTest {
         assertThat(employee.getEmployee_name()).isEqualTo("tushar");
     }
 
+    @Test()
+    public void testGetEmployeeByIdThrowsException() throws JsonProcessingException {
+
+        EmployeeResponse employeeResponse = new EmployeeResponse();
+        employeeResponse.setData(null);
+        employeeResponse.setMessage("mesage");
+        employeeResponse.setStatus("success");
+
+        when(employeeServiceClient.getEmployeeById(anyString())).thenReturn(employeeResponse);
+
+        EmployeeDoesNotExistException exception = assertThrows(EmployeeDoesNotExistException.class, () ->  employeeService.getEmployeeById("1"));
+
+        assertTrue(exception.getLocalizedMessage().equals("Employee with given id 1 does not exist!"));
+
+    }
+
+
 
     @Test
     public void testGetEmployeeByName() throws JsonProcessingException {
@@ -88,6 +110,23 @@ public class EmployeeServiceTest {
         List<Employee> employees = employeeService.getEmployeesByNameSearch("tushar");
 
         assertThat(employees.size()).isEqualTo(1);
+
+    }
+
+    @Test
+    public void testGetEmployeeByNameThrowsException() throws JsonProcessingException {
+        AllEmployeesResponse allEmployeesResponse = new AllEmployeesResponse(null);
+        allEmployeesResponse.setMessage("message");
+        allEmployeesResponse.setStatus("success");
+
+
+        when(employeeServiceClient.getAllEmployees()).thenReturn(allEmployeesResponse);
+
+
+        EmployeeDoesNotExistException e = assertThrows(EmployeeDoesNotExistException.class, () ->  employeeService.getEmployeesByNameSearch("tushar"));
+
+        assertTrue(e.getLocalizedMessage().equals("Employee with given name tushar does not exist!"));
+
 
     }
 
@@ -141,7 +180,25 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    public void testCreateEmplyee() throws JsonProcessingException {
+    public void testGetHighestSalaryOfEmployeesThrowsException() throws JsonProcessingException {
+
+        AllEmployeesResponse allEmployeesResponse = new AllEmployeesResponse(null);
+        allEmployeesResponse.setMessage("message");
+        allEmployeesResponse.setStatus("success");
+
+
+        when(employeeServiceClient.getAllEmployees()).thenReturn(allEmployeesResponse);
+
+        EmployeeDoesNotExistException e = assertThrows(EmployeeDoesNotExistException.class, () ->  employeeService.getTop10HighestEarningEmployeeNames());
+
+        assertTrue(e.getLocalizedMessage().equals("No Employee Data Available!"));
+
+
+
+
+    }
+    @Test
+    public void testCreateEmplyee() throws Exception {
         EmployeeCreateResponse employeeCreateResponse = new EmployeeCreateResponse();
         employeeCreateResponse.setStatus("success");
         employeeCreateResponse.setData(new DummyEmployeeResponse("Tusahr", "200","23", 22L));
@@ -156,8 +213,27 @@ public class EmployeeServiceTest {
         assertThat(employees.getEmployee_name()).isEqualTo("Tusahr");
 
     }
+
     @Test
-    public void testDeleteEmployeeById() throws JsonProcessingException {
+    public void testCreateEmplyeeThrowsException() throws Exception {
+        EmployeeCreateResponse employeeCreateResponse = new EmployeeCreateResponse();
+        employeeCreateResponse.setStatus("success");
+        employeeCreateResponse.setData(null);
+
+        when(employeeServiceClient.createEmployee(any())).thenReturn(employeeCreateResponse);
+        Map<String ,Object> map = new HashMap<>();
+        map.put("name", "tushar");
+        map.put("salary", "200");
+        map.put("age", "23");
+
+        Exception e = assertThrows(Exception.class, () ->  employeeService.createEmployee(map));
+
+        assertTrue(e.getLocalizedMessage().equals("Failed to create employee"));
+
+
+    }
+    @Test
+    public void testDeleteEmployeeById() throws Exception {
         Employee employee =  new Employee(1,"tushar", 200L, 23, "");
 
         EmployeeResponse employeeResponse = new EmployeeResponse();
@@ -177,6 +253,31 @@ public class EmployeeServiceTest {
 
 
         assertThat(response).isEqualTo("tushar");
+
+    }
+
+
+    @Test
+    public void testDeleteEmployeeByIdThrowsException() throws Exception {
+        Employee employee =  new Employee(1,"tushar", 200L, 23, "");
+
+        EmployeeResponse employeeResponse = new EmployeeResponse();
+        employeeResponse.setData(employee);
+        employeeResponse.setMessage("mesage");
+        employeeResponse.setStatus("success");
+
+
+        when(employeeServiceClient.getEmployeeById(anyString())).thenReturn(employeeResponse);
+
+
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setStatus(null);
+        baseResponse.setMessage("message");
+        when(employeeServiceClient.deleteEmployeeById(any())).thenReturn(baseResponse);
+
+        Exception e = assertThrows(Exception.class, () ->  employeeService.deleteEmployeeById("1"));
+
+        assertTrue(e.getLocalizedMessage().equals("Failed to delete employee with given Id 1"));
 
     }
 
